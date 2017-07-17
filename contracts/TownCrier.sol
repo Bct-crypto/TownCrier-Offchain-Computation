@@ -11,7 +11,7 @@ contract TownCrier {
 
     event Upgrade(address newAddr);
     event Reset(uint gas_price, uint min_fee, uint cancellation_fee); 
-    event RequestInfo(uint64 id, uint8 requestType, address requester, uint fee, address callbackAddr, bytes32 paramsHash, uint timestamp, bytes32[] requestData); // log of requests, the Town Crier server watches this event and processes requests
+    event RequestInfo(uint64 id, uint8 requestType, address requester, uint fee, address callbackAddr, bytes32 paramsHash, uint timestamp, bytes requestData); // log of requests, the Town Crier server watches this event and processes requests
     event DeliverInfo(uint64 requestId, uint fee, uint gasPrice, uint gasLeft, uint callbackGas, bytes32 paramsHash, uint64 error, bytes32 respData); // log of responses
     event Cancel(uint64 requestId, address canceller, address requester, uint fee, int flag); // log of cancellations
 
@@ -91,7 +91,7 @@ contract TownCrier {
         }
     }
 
-    function request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint timestamp, bytes32[] requestData) public payable returns (int) {
+    function request(uint8 requestType, address callbackAddr, bytes4 callbackFID, uint timestamp, bytes requestData) public payable returns (int) {
         if (externalCallFlag) {
             throw;
         }
