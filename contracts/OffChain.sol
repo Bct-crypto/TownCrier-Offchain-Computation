@@ -47,7 +47,7 @@ contract OffChain {
   function bitStampCallback(int _requestID, string _price)
   public
   {
-    require(_requestID == bitStampID);
+    require(_requestID == bitStampID && msg.sender == address(townCrier));
     bitStampPrice = formatter.stringToUint(_price);
     compareAverage();
   }
@@ -61,7 +61,7 @@ contract OffChain {
   function coinbaseCallback(int _requestID, string _price)
   public
   {
-    require(_requestID == coinbaseID);
+    require(_requestID == coinbaseID && msg.sender == address(townCrier));
     coinbasePrice = formatter.stringToUint(_price);
     compareAverage();
   }
@@ -75,7 +75,7 @@ contract OffChain {
   function coinMarketCapCallback(int _requestID, string _price)
   public
   {
-    require(_requestID == coinMarketCapID);
+    require(_requestID == coinMarketCapID && msg.sender == address(townCrier));
     coinMarketCapPrice = formatter.stringToUint(_price);
     compareAverage();
   }
