@@ -2,20 +2,20 @@
 
 ## Town Crier Request Types
 
-1 Flight departure delay
-3 Stock ticker
-4 UPS tracking
-5 Coin market price
-6 Weather
-9 WolframAlpha
-10 Random Number Generator
-16 Flight departure delay
-17 Steam Transaction
-21 Custom HTTP GET
-22 Custom HTTP POST
-23 Custom Computation
+- 1 Flight departure delay
+- 3 Stock ticker
+- 4 UPS tracking
+- 5 Coin market price
+- 6 Weather
+- 9 WolframAlpha
+- 10 Random Number Generator (new)
+- 16 Flight departure delay
+- 17 Steam Transaction
+- 21 Custom HTTP GET (new)
+- 22 Custom HTTP POST (new)
+- 23 Custom Computation (new)
 
-### 21 Custom HTTP Request
+### 21 Custom GET Request
 
 Parameters
 - URL string to be interpolated with the URL parameters
@@ -25,7 +25,7 @@ Parameters
 - Array of paths to parse out of the response(see TC Path section)
 - Encrypted variable indicator
 
-### 22 Custom HTTP Request
+### 22 Custom POST Request
 
 Parameters
 - URL string to be interpolated with the URL parameters
