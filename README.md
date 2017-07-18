@@ -8,6 +8,7 @@
 5 Coin market price
 6 Weather
 9 WolframAlpha
+10 Random Number Generator
 16 Flight departure delay
 17 Steam Transaction
 21 Custom HTTP GET
@@ -38,7 +39,6 @@ Parameters
 
 Runs custom solidity code to allow for secure and private off chain data retreival, computation, and formatting. Execution is entered by calling the `OffChain` contract's `report` function, with the parameters expected to be fed back on chain. If the report function is not called, the contract continues running until there are no longer log events to respond to, or the computation runs out of gas.
 
-
 Parameters:
 - Custom Computation ID(obtained from side loading)
 - Data to be fed into the contract's `execute` function at the time of execution
@@ -47,6 +47,11 @@ Side loaded parameters are sent in as JSON with two top level keys, `data` and `
 
 - gasLimit: The maximum amount of gas to charge your contract.
 - solidity: A JSON object of the Solidity contracts to run. The keys should be the file paths as they are referred to in the import statements. A single contract named `OffChain`, with a single function named `execute` is required to be passed in.
+
+The side loaded API responds with a JSON object with two top level keys, `data` and `signature`. The `signature` value is a signature from the Town Crier messaging key of the stringified `data` object. The `data` object contains:
+- `id`: The Custom Computation ID used to refer to this computation from SGX in the future.
+- `publicKey`: The public key of a private key that is accessible only when using this Custom Computation
+- `hash`: The hash of the stringified `data` object which was passed in with the originating request.
 
 ## TC Path
 
