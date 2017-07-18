@@ -1,9 +1,13 @@
+import './Formatter.sol';
 import './OnChain.sol';
 import './TownCrier.sol';
 
 
 contract OffChain {
+  Formatter formatter;
+  OnChain onChain;
   TownCrier townCrier;
+
   int bitStampID;
   int coinbaseID;
   int coinMarketCapID;
@@ -14,6 +18,7 @@ contract OffChain {
   function OffChain()
   public {
     townCrier = new TownCrier();
+    onChain = new OnChain();
   }
 
   function execute()
@@ -26,53 +31,52 @@ contract OffChain {
   function compareAverage()
   ensureAllPricesReceived
   {
-    OnChain onChain = new OnChain();
     if (averagePrice() > 300000) {
-      onChain.report(uint(1));
+      onChain.report(true);
     } else {
-      onChain.report(uint(0));
+      onChain.report(false);
     }
   }
 
   function getBitStampPrice()
   {
     bitStampID = townCrier.request(21, this, bytes4(keccak256('bitStampCallback(uint256)')), 0,
-      "['https://www.bitstamp.net/api/ticker/',[],[],[],['json$/last>>uint256'],0]");
+      "['https://www.bitstamp.net/api/ticker/',[],[],[],['json$/last>>string'],0]");
   }
 
-  function bitStampCallback(int _requestID, uint _price)
+  function bitStampCallback(int _requestID, string _price)
   public
   {
     require(_requestID == bitStampID);
-    bitStampPrice = _price;
+    bitStampPrice = formatter.stringToUint(_price);
     compareAverage();
   }
 
   function getCoinbasePrice()
   {
     coinbaseID = townCrier.request(21, this, bytes4(keccak256('coinbaseCallback(uint256)')), 0,
-      "['curl https://api.coinbase.com/v2/prices/BTC-USD/buy',[],[],['Authorization: Bearer abd90df5f27a7b170cd775abf89d632b350b7c1c9d53e08b340cd9832ce52c2c'],['json$/data/amount>>uint256'],0]");
+      "['curl https://api.coinbase.com/v2/prices/BTC-USD/buy',[],[],['Authorization: Bearer abd90df5f27a7b170cd775abf89d632b350b7c1c9d53e08b340cd9832ce52c2c'],['json$/data/amount>>string'],0]");
   }
 
-  function coinbaseCallback(int _requestID, uint _price)
+  function coinbaseCallback(int _requestID, string _price)
   public
   {
     require(_requestID == coinbaseID);
-    coinbasePrice = _price;
+    coinbasePrice = formatter.stringToUint(_price);
     compareAverage();
   }
 
   function getCoinMarketCapPrice()
   {
     coinMarketCapID = townCrier.request(21, this, bytes4(keccak256('coinMarketCapCallback(uint256)')), 0,
-      "['https://api.coinmarketcap.com/v1/ticker/bitcoin/',[],[],[],['json$/0/price_usd>>uint256'],0]");
+      "['https://api.coinmarketcap.com/v1/ticker/bitcoin/',[],[],[],['json$/0/price_usd>>string'],0]");
   }
 
-  function coinMarketCapCallback(int _requestID, uint _price)
+  function coinMarketCapCallback(int _requestID, string _price)
   public
   {
     require(_requestID == coinMarketCapID);
-    coinMarketCapPrice = _price;
+    coinMarketCapPrice = formatter.stringToUint(_price);
     compareAverage();
   }
 
