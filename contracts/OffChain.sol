@@ -40,7 +40,7 @@ contract OffChain {
 
   function getBitStampPrice()
   {
-    bitStampID = townCrier.request(21, this, bytes4(keccak256('bitStampCallback(uint256)')), 0,
+    bitStampID = townCrier.request(21, this, bytes4(keccak256('bitStampCallback(int256,uint256)')), 0,
       "['https://www.bitstamp.net/api/ticker/',[],[],[],['json$/last>>string'],0]");
   }
 
@@ -54,7 +54,15 @@ contract OffChain {
 
   function getCoinbasePrice()
   {
-    coinbaseID = townCrier.request(21, this, bytes4(keccak256('coinbaseCallback(uint256)')), 0,
+    decryptID = decrypter.request(this, bytes4(keccak256('coinbaseCallback(uint256)')), _data);
+  }
+
+  function getCoinbasePrice(bytes _data)
+  external
+  {
+    string memory queryStart = "['curl https://api.coinbase.com/v2/prices/BTC-USD/buy',[],[],['Authorization: Bearer ";
+    bytes memory query = bytesConcat(bytes(queryStart), bytes(queryStart));
+    coinbaseID = townCrier.request(21, this, bytes4(keccak256('coinbaseCallback(int256,uint256)')), 0,
       "['curl https://api.coinbase.com/v2/prices/BTC-USD/buy',[],[],['Authorization: Bearer abd90df5f27a7b170cd775abf89d632b350b7c1c9d53e08b340cd9832ce52c2c'],['json$/data/amount>>string'],0]");
   }
 
@@ -68,7 +76,7 @@ contract OffChain {
 
   function getCoinMarketCapPrice()
   {
-    coinMarketCapID = townCrier.request(21, this, bytes4(keccak256('coinMarketCapCallback(uint256)')), 0,
+    coinMarketCapID = townCrier.request(21, this, bytes4(keccak256('coinMarketCapCallback(int256,uint256)')), 0,
       "['https://api.coinmarketcap.com/v1/ticker/bitcoin/',[],[],[],['json$/0/price_usd>>string'],0]");
   }
 
