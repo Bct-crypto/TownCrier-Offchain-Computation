@@ -1,15 +1,18 @@
 import './Formatter.sol';
 import './OnChain.sol';
 import './TownCrier.sol';
+import './NativeDecryption.sol';
 
 
 contract OffChain is Formatter {
   OnChain onChain;
   TownCrier townCrier;
+  NativeDecryption decrypter;
 
   int bitStampID;
   int coinbaseID;
   int coinMarketCapID;
+  uint decryptID;
   uint bitStampPrice;
   uint coinbasePrice;
   uint coinMarketCapPrice;
@@ -20,10 +23,10 @@ contract OffChain is Formatter {
     onChain = new OnChain();
   }
 
-  function execute()
+  function execute(bytes _data)
   public {
     getBitStampPrice();
-    getCoinbasePrice();
+    decryptCoinbaseCredentials(_data);
     getCoinMarketCapPrice();
   }
 
@@ -51,18 +54,22 @@ contract OffChain is Formatter {
     compareAverage();
   }
 
-  function getCoinbasePrice()
+  function decryptCoinbaseCredentials(bytes _data)
   {
-    decryptID = decrypter.request(this, bytes4(keccak256('coinbaseCallback(uint256)')), _data);
+    decryptID = decrypter.request(this, bytes4(keccak256('getCoinbasePrice(uint256,bytes)')), _data);
   }
 
-  function getCoinbasePrice(bytes _data)
-  external
+  function getCoinbasePrice(uint256 _requestID, bytes _key)
+  public
   {
+    require(_requestID == decryptID && msg.sender == address(decrypter));
+
     string memory queryStart = "['curl https://api.coinbase.com/v2/prices/BTC-USD/buy',[],[],['Authorization: Bearer ";
-    bytes memory query = bytesConcat(bytes(queryStart), bytes(queryStart));
-    coinbaseID = townCrier.request(21, this, bytes4(keccak256('coinbaseCallback(int256,uint256)')), 0,
-      "['curl https://api.coinbase.com/v2/prices/BTC-USD/buy',[],[],['Authorization: Bearer abd90df5f27a7b170cd775abf89d632b350b7c1c9d53e08b340cd9832ce52c2c'],['json$/data/amount>>string'],0]");
+    string memory queryEnd = "'],['json$/data/amount>>string'],0]";
+    bytes memory query = bytesConcat(bytes(queryStart), _key);
+    query = bytesConcat(query, bytes(queryEnd));
+
+    coinbaseID = townCrier.request(21, this, bytes4(keccak256('coinbaseCallback(int256,uint256)')), 0, query);
   }
 
   function coinbaseCallback(int _requestID, string _price)
