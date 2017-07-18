@@ -3,8 +3,7 @@ import './OnChain.sol';
 import './TownCrier.sol';
 
 
-contract OffChain {
-  Formatter formatter;
+contract OffChain is Formatter {
   OnChain onChain;
   TownCrier townCrier;
 
@@ -48,7 +47,7 @@ contract OffChain {
   public
   {
     require(_requestID == bitStampID && msg.sender == address(townCrier));
-    bitStampPrice = formatter.stringToUint(_price);
+    bitStampPrice = stringToUint(_price);
     compareAverage();
   }
 
@@ -70,7 +69,7 @@ contract OffChain {
   public
   {
     require(_requestID == coinbaseID && msg.sender == address(townCrier));
-    coinbasePrice = formatter.stringToUint(_price);
+    coinbasePrice = stringToUint(_price);
     compareAverage();
   }
 
@@ -84,7 +83,7 @@ contract OffChain {
   public
   {
     require(_requestID == coinMarketCapID && msg.sender == address(townCrier));
-    coinMarketCapPrice = formatter.stringToUint(_price);
+    coinMarketCapPrice = stringToUint(_price);
     compareAverage();
   }
 
